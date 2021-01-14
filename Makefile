@@ -1,31 +1,41 @@
 include node_client.mk
 
-BOOTSTRAP_NODE=/ip4/207.154.232.92/tcp/7777
+# BOOTSTRAP_NODE=/ip4/207.154.232.92/tcp/7777
+# 206.81.30.129
+BOOTSTRAP_NODE=/ip4/206.81.30.129/tcp/7777
+LOCAL_NODE=/ip4/127.0.0.1/tcp/7777
 
-default:
-	cargo build
+develop:
+	cargo +nightly build
 
 release:
-	cargo build --release
+	cargo +nightly build --release
 
 build: release
 
 test:
-	cargo test
+	cargo +nightly test
 
 server:
-	cargo run -p particle-server -- -b ${BOOTSTRAP_NODE}
+	cargo +nightly run -p particle-server -- -b ${BOOTSTRAP_NODE}
+
+server-local:
+	cargo +nightly run -p particle-server -- -b ${LOCAL_NODE}
 
 server-debug:
 	RUST_LOG="trace,tokio_threadpool=info,tokio_reactor=info,mio=info,tokio_io=info" \
-	cargo run -p particle-server -- -b ${BOOTSTRAP_NODE}
+	cargo +nightly run -p particle-server -- -b ${BOOTSTRAP_NODE}
+
+server-debug-local:
+	RUST_LOG="trace,tokio_threadpool=info,tokio_reactor=info,mio=info,tokio_io=info" \
+	cargo +nightly run -p particle-server -- -b ${LOCAL_NODE}
 
 clean:
 	cargo clean
 
 # build x86_64 binaries
 cross-build:
-	cargo update -p libp2p
+	cargo +nightly update -p libp2p
 	cross build --release --target x86_64-unknown-linux-gnu
 
 X86_TARGET=./target/x86_64-unknown-linux-gnu/release
